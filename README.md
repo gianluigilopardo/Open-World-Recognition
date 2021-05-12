@@ -1,1 +1,1 @@
-"# Open-World-Recognition" 
+# Open-World-Recognition
