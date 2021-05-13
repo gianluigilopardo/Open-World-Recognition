@@ -5,6 +5,21 @@ import params
 import utils
 
 
+def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
+    criterion = torch.nn.BCEWithLogitsLoss
+    m = torch.nn.Sigmoid()
+    outputs, old_outputs, onehot_labels = outputs.to(params.DEVICE), old_outputs.to(DEVICE), \
+                                          onehot_labels.to(params.DEVICE)
+    classes = utils.get_classes(train_splits, task)
+    if task == 0:
+        loss = criterion(outputs, onehot_labels)
+    if task > 0:
+        target = onehot_labels.clone().to(params.DEVICE)
+        target[:, classes] = m(old_outputs[:, classes]).to(params.DEVICE)
+        loss = criterion(input=outputs, target=target)
+    return loss
+
+
 def train_network(classes, model, old_model, optimizer, data_loader, scheduler, task, train_splits):
     for epoch in range(params.NUM_EPOCHS):
         length = 0
@@ -13,7 +28,7 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             images = images.float().to(params.DEVICE)
             labels = labels.to(params.DEVICE)
             onehot_labels = torch.eye(params.NUM_CLASSES)
-            mapped_labels = utils.map_splits(labels, classes,)
+            mapped_labels = utils.map_splits(labels, classes, )
             optimizer.zero_grad()
             old_outputs = old_model(images, features=False)
             outputs = model(images, features=False)
