@@ -3,6 +3,7 @@ import torch
 from PIL import Image
 
 import utils
+import params
 
 
 class Dataset(torch.utils.data.Dataset):  # extends pytorch class Dataset
@@ -44,6 +45,9 @@ class Dataset(torch.utils.data.Dataset):  # extends pytorch class Dataset
         # This method returns a list containing the indexes of all the images
         # belonging to the classes [current_task, current_task + TASK_SIZE]
         indexes = []
+        current_task = int(current_task/params.TASK_SIZE)
+        # print(current_task)
+        # print(self.splits)
         self.searched_classes = self.splits[current_task]
         i = 0
         for el in self._targets:
@@ -52,14 +56,14 @@ class Dataset(torch.utils.data.Dataset):  # extends pytorch class Dataset
             i += 1
         return indexes
 
-    def __get_item__(self, idx):
+    def __getitem__(self, idx):
         """
         :param idx: index of an image
         :return: image and its class label
         """
         image = np.transpose(self._data[idx])
         label = self._targets[idx]
-        return image, label
+        return image, label, idx
 
     def append(self, images, labels):
         self._data = np.concatenate((self._data, images), axis=0)
@@ -79,8 +83,8 @@ class Subset(Dataset):
         self.indices = indices
         self.transform = transform
 
-    def __get_item__(self, idx):
-        image, labels = self.dataset[self.indices[idx]]
+    def __getitem__(self, idx):
+        image, labels, _ = self.dataset[self.indices[idx]]
         return self.transform(Image.fromarray(np.transpose(image))), labels, idx
 
     def __len__(self):

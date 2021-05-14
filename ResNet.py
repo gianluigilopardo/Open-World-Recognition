@@ -21,20 +21,15 @@ class BasicBlock(nn.Module):
 
     def forward(self, x):
         residual = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
         out = self.conv2(out)
         out = self.bn2(out)
-
         if self.downsample is not None:
             residual = self.downsample(x)
-
         out += residual
         out = self.relu(out)
-
         return out
 
 
@@ -56,24 +51,18 @@ class Bottleneck(nn.Module):
 
     def forward(self, x):
         residual = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
-
         out = self.conv3(out)
         out = self.bn3(out)
-
         if self.downsample is not None:
             residual = self.downsample(x)
-
         out += residual
         out = self.relu(out)
-
         return out
 
 
@@ -91,7 +80,6 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 64, layers[2], stride=2)
         self.avgpool = nn.AvgPool2d(8, stride=1)
         self.fc = nn.Linear(64 * block.expansion, num_classes)
-
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -120,19 +108,18 @@ class ResNet(nn.Module):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
-
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
-
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
 
         if features:
+            # use ResNet as features extractor
             x = x / x.norm()
         else:
+            # take fully connected layer
             x = self.fc(x)
-
         return x
 
 

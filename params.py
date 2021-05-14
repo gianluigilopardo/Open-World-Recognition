@@ -4,7 +4,7 @@ DEVICE = 'cpu'  # 'cuda' or 'cpu'
 BATCH_SIZE = 128
 
 NUM_CLASSES = 100  # CIFAR100
-TASK_SIZE = 20  # we divide data in task_size
+TASK_SIZE = 10
 
 NUM_EPOCHS = 70
 

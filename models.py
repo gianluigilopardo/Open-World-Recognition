@@ -6,13 +6,13 @@ import utils
 
 
 def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
-    criterion = torch.nn.BCEWithLogitsLoss
+    criterion = torch.nn.BCEWithLogitsLoss()
     m = torch.nn.Sigmoid()
-    outputs, old_outputs, onehot_labels = outputs.to(params.DEVICE), old_outputs.to(DEVICE), \
+    outputs, old_outputs, onehot_labels = outputs.to(params.DEVICE), old_outputs.to(params.DEVICE), \
                                           onehot_labels.to(params.DEVICE)
     classes = utils.get_classes(train_splits, task)
     if task == 0:
-        loss = criterion(outputs, onehot_labels)
+        loss = criterion(input=outputs, target=onehot_labels)
     if task > 0:
         target = onehot_labels.clone().to(params.DEVICE)
         target[:, classes] = m(old_outputs[:, classes]).to(params.DEVICE)
@@ -26,14 +26,16 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
         running_corrects = 0
         for images, labels, idx in data_loader:
             images = images.float().to(params.DEVICE)
-            labels = labels.to(params.DEVICE)
-            onehot_labels = torch.eye(params.NUM_CLASSES)
-            mapped_labels = utils.map_splits(labels, classes, )
+            labels = labels.long().to(params.DEVICE)  # .long() 
+            onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE)
+            mapped_labels = utils.map_splits(labels, classes)
             optimizer.zero_grad()
-            old_outputs = old_model(images, features=False)
+            # features=False : use fully connected layer (see ResNet)
+            old_outputs = old_model(images, features=False)  
             outputs = model(images, features=False)
-            loss = utils.compute_loss(outputs, old_outputs, onehot_labels, task, train_splits)
-            cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None:], axis=1).to(params.DEVICE)
+            loss = compute_loss(outputs, old_outputs, onehot_labels, task, train_splits)
+            # cut_outputs take only the first #task outputs: see simplification in main
+            cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
             _, preds = torch.max(cut_outputs.data, 1)
             running_corrects += torch.sum(preds == mapped_labels.data).data.item()
             length += len(images)
@@ -41,6 +43,6 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             optimizer.step()
         accuracy = running_corrects / float(length)
         scheduler.step()
-        print('Step: ' + str(task) + ", Epoch: " + str(epoch), ", Loss: " +
+        print('Step: ' + str(task) + ", Epoch: " + str(epoch) + ", Loss: " +
               str(loss.item()) + ', Accuracy: ' + str(accuracy))
         return model
