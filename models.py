@@ -43,6 +43,6 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             optimizer.step()
         accuracy = running_corrects / float(length)
         scheduler.step()
-    print('Step: ' + str(task) + ", Epoch: " + str(epoch) + ", Loss: " +
-          str(loss.item()) + ', Accuracy: ' + str(accuracy))
+        print('Step: ' + str(task) + ", Epoch: " + str(epoch) + ", Loss: " +
+              str(loss.item()) + ', Accuracy: ' + str(accuracy))
     return model
