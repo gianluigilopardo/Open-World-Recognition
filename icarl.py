@@ -87,7 +87,7 @@ def construct_exemplar_set(exemplars, m, classes, train_data, train_indexes, mod
             exemplars[image_class] = generate_new_exemplars(images_idx, m, model, train_data)
         else:
             exemplars[image_class] = random.sample(images_idx, m)
-        return exemplars
+    return exemplars
 
 
 # Algorithm 5 iCaRL REDUCE EXEMPLAR SET
