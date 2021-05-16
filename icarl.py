@@ -9,11 +9,6 @@ from dataset import *
 
 # Algorithm 1 iCaRL CLASSIFY
 def classify(images, exemplars, model, task, train_data, mean=None):
-    print(str(81) + ': ' + str(exemplars[81]))
-    print(str(14) + ': ' + str(exemplars[14]))
-    print(str(3) + ': ' + str(exemplars[3]))
-    print(str(94) + ': ' + str(exemplars[94]))
-    print(str(35) + ': ' + str(exemplars[35]))
     preds = []
     num_classes = task + params.TASK_SIZE
     means = torch.zeros((num_classes, 64)).to(params.DEVICE)
@@ -26,11 +21,8 @@ def classify(images, exemplars, model, task, train_data, mean=None):
     if mean is None:
         for i in range(int(task * params.TASK_SIZE / params.NUM_CLASSES)+1):
             analyzed_classes = np.concatenate((analyzed_classes, train_data.splits[i]))
-        print(analyzed_classes)
         for k in range(task + params.TASK_SIZE):
             class_k = int(analyzed_classes[k])
-            print(str(k) + ': ' + str(class_k))
-            print(exemplars[class_k])
             ss = Subset(train_data, exemplars[class_k], transformer)
             data_loader = DataLoader(ss,  # num_workers=params.NUM_WORKERS,
                                      batch_size=params.BATCH_SIZE)
