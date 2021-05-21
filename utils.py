@@ -1,34 +1,24 @@
 import numpy as np
 import torch
 import random
-
 import params
-SEED = 24
-# seeds : 42, 24, ... , ... , ...
+SEED = 42
 
-def get_classes_names(dataset):
-    return list(dataset.class_to_idx.keys())
-
-
-def get_task_indexes(dataset, current_task=0):
-    # This method returns a list containing the indexes of all the images
-    # belonging to the classes in the current task: [current_task, current_task + TASK_SIZE]
-    indexes = []
-    current_task = int(current_task / params.TASK_SIZE)
-    searched_classes = splitter()[current_task]
-    for i in range(len(dataset.data)):
-        if dataset.targets[i] in searched_classes:
-            indexes.append(i)
-    return indexes
-
-
-def splitter():
-    classes_idx = range(params.NUM_CLASSES)
-    splits = [None] * int(params.NUM_TASKS)
-    for i in range(int(params.NUM_TASKS)):
-        random.seed(SEED)
-        splits[i] = random.sample(set(classes_idx), k=int(params.TASK_SIZE))
-        classes_idx = list(set(classes_idx) - set(splits[i]))
+"""
+    we have 100 classes and we have to divide them into tasks, it takes the #classes we have, the #number of tasks and 
+    it divides the dataset in vectors of the desired size (10 or 50 in case of open set) and for the dataset retrieves
+    the indices of the classes 
+    
+    
+"""
+def splitter(): #a
+    el = range(params.NUM_CLASSES)
+    splits = [None] * int(params.NUM_CLASSES / params.TASK_SIZE)
+    for i in range(0, int(params.NUM_CLASSES / params.TASK_SIZE)):
+        random.seed(SEED) #because the splits for the training set and test set should be the same so for this reason we put here the random seed
+        n = random.sample(set(el), k=int(params.NUM_CLASSES / params.TASK_SIZE))
+        splits[i] = n
+        el = list(set(el) - set(n))
     return splits
 
 
@@ -42,7 +32,7 @@ def map_splits(labels, splits):
 
 def get_classes(train_splits, task):
     classes = []
-    for i, x_split in enumerate(train_splits[:int(task / params.TASK_SIZE) + 1]):
+    for i, x_split in enumerate(train_splits[:int(task / params.NUM_CLASSES * params.TASK_SIZE) + 1]):
         x_split = np.array(x_split)  # classes in the current split
         classes = np.concatenate((classes, x_split), axis=None)  # classes in all splits up to now
     return classes.astype(int)

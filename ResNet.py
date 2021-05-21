@@ -114,20 +114,21 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
 
+        #unica cosa non standard:
         if features:
             # use ResNet as features extractor
             x = x / x.norm()
         else:
-            # take fully connected layer
+            # take fully connected layer (rete intera)
             x = self.fc(x)
         return x
 
+#which resnet do you want? ICarL uses ResNet32
 
 def resnet20(pretrained=False, **kwargs):
     n = 3
     model = ResNet(BasicBlock, [n, n, n], **kwargs)
     return model
-
 
 def resnet32(pretrained=False, **kwargs):
     n = 5

@@ -9,8 +9,9 @@ import ResNet
 from dataset import *
 import params
 import icarl
-#jfejfjefhj
-#ciao
+# jfejfjefhj
+# ciao
+
 # dataset
 cifar = datasets.cifar.CIFAR100
 train_dataset = Dataset(dataset=cifar, train=True)
