@@ -5,10 +5,10 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 
-import ResNet
-from dataset import *
-import params
-import icarl
+from owr import ResNet
+from owr.dataset import *
+from owr import params
+from owr import icarl
 
 # dataset
 cifar = datasets.cifar.CIFAR100

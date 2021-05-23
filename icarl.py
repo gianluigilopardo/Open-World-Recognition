@@ -2,9 +2,9 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 import copy
 
-import models
-import params
-from dataset import *
+from owr import models
+from owr import params
+from owr.dataset import *
 
 
 # Algorithm 1 iCaRL CLASSIFY

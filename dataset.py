@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from PIL import Image
 
-import utils
-import params
+from owr import utils
+from owr import params
 
 
 class Dataset(torch.utils.data.Dataset):  # extends pytorch class Dataset
