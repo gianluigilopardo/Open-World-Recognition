@@ -1,6 +1,6 @@
 import random
 
-DEVICE = 'cpu'  # 'cuda' or 'cpu'
+DEVICE = 'cuda'  # 'cuda' or 'cpu'
 BATCH_SIZE = 128
 
 NUM_CLASSES = 100  # CIFAR100
