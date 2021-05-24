@@ -8,7 +8,8 @@ from owr.dataset import *
 
 
 # Algorithm 1 iCaRL CLASSIFY
-def classify(images, exemplars, model, task, train_data, mean=None):
+def classify(images, exemplars, model, task, train_dataset, mean=None):
+    splits = utils.splitter()
     preds = []
     num_classes = task + params.TASK_SIZE
     means = torch.zeros((num_classes, 64)).to(params.DEVICE)
@@ -19,21 +20,23 @@ def classify(images, exemplars, model, task, train_data, mean=None):
     transformer = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     analyzed_classes = []
     if mean is None:
-        for i in range(int(task * params.TASK_SIZE / params.NUM_CLASSES)+1):
-            analyzed_classes = np.concatenate((analyzed_classes, train_data.splits[i]))
-        for k in range(task + params.TASK_SIZE):
+        for i in range(int(task / params.TASK_SIZE)+1):
+            analyzed_classes = np.concatenate((analyzed_classes, splits[i]))
+        for k in range(len(analyzed_classes)):
+            counter = 0  # number of images
             class_k = int(analyzed_classes[k])
-            ss = Subset(train_data, exemplars[class_k], transformer)
+            ss = Subset(train_dataset, exemplars[class_k], transformer)
             data_loader = DataLoader(ss, num_workers=params.NUM_WORKERS,
                                      batch_size=params.BATCH_SIZE)
-            for image, label, idx in data_loader:
+            for images, labels, idxs in data_loader:  # batches
+                counter += len(images)
                 with torch.no_grad():
-                    image = image.float().to(params.DEVICE)
-                    x = model(image, features=True)
+                    images = images.float().to(params.DEVICE)
+                    x = model(images, features=True)
                     x /= torch.norm(x, p=2)
                 ma = torch.sum(x, dim=0)
                 means[k] += ma
-            means[k] = means[k] / len(idx)  # average
+            means[k] = means[k] / len(counter)  # average
             means[k] = means[k] / means[k].norm()
     else:
         means = mean
@@ -51,7 +54,7 @@ def incremental_train(train_dataset, model, exemplars, task, train_transformer, 
     model = update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer)
     m = int(params.K / (task + params.TASK_SIZE) + 0.5)  # number of exemplars
     exemplars = reduce_exemplars(exemplars, m)
-    exemplars = construct_exemplar_set(exemplars, m, classes[task:], train_data, train_indexes, model, random_s)
+    exemplars = construct_exemplar_set(exemplars, m, classes[task:], train_dataset, train_indexes, model, random_s)
     return model, exemplars
 
 
