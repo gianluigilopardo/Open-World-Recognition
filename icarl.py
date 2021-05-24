@@ -24,7 +24,7 @@ def classify(images, exemplars, model, task, train_data, mean=None):
         for k in range(task + params.TASK_SIZE):
             class_k = int(analyzed_classes[k])
             ss = Subset(train_data, exemplars[class_k], transformer)
-            data_loader = DataLoader(ss,  # num_workers=params.NUM_WORKERS,
+            data_loader = DataLoader(ss, num_workers=params.NUM_WORKERS,
                                      batch_size=params.BATCH_SIZE)
             for image, label, idx in data_loader:
                 with torch.no_grad():
@@ -44,11 +44,11 @@ def classify(images, exemplars, model, task, train_data, mean=None):
 
 
 # Algorithm 2 iCaRL INCREMENTAL TRAIN
-def incremental_train(train_data, model, exemplars, task, train_transformer, random_s=False):
-    train_splits = train_data.splits  # indexes of the splits
-    train_indexes = train_data.get_indexes_groups(task)
+def incremental_train(train_dataset, model, exemplars, task, train_transformer, random_s=False):
+    train_splits = utils.splitter()  # indexes of the splits
+    train_indexes = utils.get_task_indexes(train_dataset, task)
     classes = utils.get_classes(train_splits, task)
-    model = update_representation(train_data, exemplars, model, task, train_indexes, train_splits, train_transformer)
+    model = update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer)
     m = int(params.K / (task + params.TASK_SIZE) + 0.5)  # number of exemplars
     exemplars = reduce_exemplars(exemplars, m)
     exemplars = construct_exemplar_set(exemplars, m, classes[task:], train_data, train_indexes, model, random_s)
@@ -56,11 +56,11 @@ def incremental_train(train_data, model, exemplars, task, train_transformer, ran
 
 
 # Algorithm 3 iCaRL UPDATE REPRESENTATION
-def update_representation(train_data, exemplars, model, task, train_indexes, train_splits, train_transformer):
+def update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer):
     classes = utils.get_classes(train_splits, task)
     # data_idx contains indexes of images in train_data (new classes) and in exemplars (old classes)
     data_idx = utils.get_indexes(train_indexes, exemplars)
-    subset = Subset(train_data, data_idx,  # num_workers=params.NUM_WORKERS,
+    subset = Subset(train_dataset, data_idx,  # num_workers=params.NUM_WORKERS,
                     train_transformer)
     data_loader = DataLoader(subset, batch_size=params.BATCH_SIZE,  # num_workers=params.NUM_WORKERS,
                              shuffle=True)
@@ -74,17 +74,17 @@ def update_representation(train_data, exemplars, model, task, train_indexes, tra
 
 
 # Algorithm 4 iCaRL CONSTRUCT EXEMPLAR SET
-def construct_exemplar_set(exemplars, m, classes, train_data, train_indexes, model, random_set=False):
+def construct_exemplar_set(exemplars, m, classes, train_dataset, train_indexes, model, random_set=False):
     # classes: current classes
     exemplars = copy.deepcopy(exemplars)
     for image_class in classes:
         images_idx = []
         for i in train_indexes:
-            image, label, idx = train_data.__getitem__(i)
+            image, label = train_dataset.__getitem__(i)
             if label == image_class:
-                images_idx.append(idx)
+                images_idx.append(i)
         if random_set is not True:
-            exemplars[image_class] = generate_new_exemplars(images_idx, m, model, train_data)
+            exemplars[image_class] = generate_new_exemplars(images_idx, m, model, train_dataset)
         else:
             exemplars[image_class] = random.sample(images_idx, m)
     return exemplars
@@ -99,12 +99,12 @@ def reduce_exemplars(exemplars, m):
     return exemplars
 
 
-def generate_new_exemplars(images_idx, m, model, train_data):
+def generate_new_exemplars(images_idx, m, model, train_dataset):
     model = model.train(False)
     features = []
     with torch.no_grad():
         for idx in images_idx:
-            image, label, _ = train_data.__getitem__(idx)
+            image, label = train_dataset.__getitem__(idx)
             image = torch.tensor(image).unsqueeze(0).float()
             x = model(image.to(params.DEVICE), features=True).data.cpu().numpy()
             x = x / np.linalg.norm(x)

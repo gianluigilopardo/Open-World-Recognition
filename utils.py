@@ -6,14 +6,29 @@ from owr import params
 SEED = 42
 
 
+def get_classes_names(dataset):
+    return list(dataset.class_to_idx.keys())
+
+
+def get_task_indexes(dataset, current_task=0):
+    # This method returns a list containing the indexes of all the images
+    # belonging to the classes in the current task: [current_task, current_task + TASK_SIZE]
+    indexes = []
+    current_task = int(current_task / params.TASK_SIZE)
+    searched_classes = splitter()[current_task]
+    for i in range(len(dataset.data)):
+        if dataset.targets[i] in searched_classes:
+            indexes.append(i)
+    return indexes
+
+
 def splitter():
-    el = range(params.NUM_CLASSES)
-    splits = [None] * int(params.NUM_CLASSES / params.TASK_SIZE)
-    for i in range(0, int(params.NUM_CLASSES / params.TASK_SIZE)):
+    classes_idx = range(params.NUM_CLASSES)
+    splits = [None] * int(params.NUM_TASKS)
+    for i in range(int(params.NUM_TASKS)):
         random.seed(SEED)
-        n = random.sample(set(el), k=int(params.NUM_CLASSES / params.TASK_SIZE))
-        splits[i] = n
-        el = list(set(el) - set(n))
+        splits[i] = random.sample(set(classes_idx), k=int(params.TASK_SIZE))
+        classes_idx = list(set(classes_idx) - set(splits[i]))
     return splits
 
 
