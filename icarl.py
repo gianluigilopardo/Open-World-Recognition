@@ -40,7 +40,7 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
             means[k] = means[k] / means[k].norm()
     else:
         means = mean
-    print('means: ' + str(means))
+    # print('means: ' + str(means))
     for data in phi_x:
         pred = np.argmin(np.sqrt(np.sum((data.data.cpu().numpy() - means.data.cpu().numpy()) ** 2, axis=1)))
         # print('pred: ' + str(pred))
@@ -51,7 +51,7 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
 # Algorithm 2 iCaRL INCREMENTAL TRAIN
 def incremental_train(train_dataset, model, exemplars, task, train_transformer, random_s=False):
     train_splits = utils.splitter()  # indexes of the splits
-    print('incremental_train splits: ' + str(train_splits))
+    # print('incremental_train splits: ' + str(train_splits))
     train_indexes = utils.get_task_indexes(train_dataset, task)
     classes = utils.get_classes(train_splits, task)
     model = update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer)
@@ -66,10 +66,10 @@ def update_representation(train_dataset, exemplars, model, task, train_indexes, 
     classes = utils.get_classes(train_splits, task)
     # data_idx contains indexes of images in train_data (new classes) and in exemplars (old classes)
     data_idx = utils.get_indexes(train_indexes, exemplars)
-    print('len(data_idx): ' + str(len(data_idx)))
+    # print('len(data_idx): ' + str(len(data_idx)))
     subset = Subset(train_dataset, data_idx,  
                     train_transformer)
-    print('len(subset):', str(len(subset)))
+    # print('len(subset):', str(len(subset)))
     data_loader = DataLoader(subset, batch_size=params.BATCH_SIZE, num_workers=params.NUM_WORKERS,
                              shuffle=True)
     optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MOMENTUM,

@@ -35,7 +35,7 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             # features=False : use fully connected layer (see ResNet)
             old_outputs = old_model(images, features=False)
             outputs = model(images, features=False)
-            #print('outputs: ' + str(outputs))
+            # print('outputs: ' + str(outputs))
             loss = compute_loss(outputs, old_outputs, onehot_labels, task, train_splits)
             # cut_outputs take only the first #task outputs: see simplification in main
             cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
