@@ -22,6 +22,7 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
     if mean is None:
         for i in range(int(task / params.TASK_SIZE)+1):
             analyzed_classes = np.concatenate((analyzed_classes, splits[i]))
+        print('analyzed_classes: ' + str(analyzed_classes))
         for k in range(len(analyzed_classes)):
             counter = 0  # number of images
             class_k = int(analyzed_classes[k])
@@ -34,14 +35,15 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
                     images = images.float().to(params.DEVICE)
                     x = model(images, features=True)
                     x /= torch.norm(x, p=2)
-                ma = torch.sum(x, dim=0)
-                means[k] += ma
+                means[k] += torch.sum(x, dim=0)
             means[k] = means[k] / counter  # average
             means[k] = means[k] / means[k].norm()
     else:
         means = mean
+    print('means: ' + str(means))
     for data in phi_x:
         pred = np.argmin(np.sqrt(np.sum((data.data.cpu().numpy() - means.data.cpu().numpy()) ** 2, axis=1)))
+        print('pred: ' + str(pred))
         preds.append(pred)
     return torch.tensor(preds), means
 
