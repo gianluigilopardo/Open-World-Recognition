@@ -18,6 +18,7 @@ class Subset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         image, labels = self.dataset[self.indexes[idx]]
+        print('image.shape: ' + str(image.shape))
         return self.transform(np.transpose(image)), labels, idx
 
     def __len__(self):
