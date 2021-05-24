@@ -17,7 +17,7 @@ class Subset(torch.utils.data.Dataset):
         self.transform = transform
 
     def __getitem__(self, idx):
-        image, labels, _ = self.dataset[self.indexes[idx]]
+        image, labels = self.dataset[self.indexes[idx]]
         return self.transform(Image.fromarray(np.transpose(image))), labels, idx
 
     def __len__(self):
