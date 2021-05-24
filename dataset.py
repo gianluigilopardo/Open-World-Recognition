@@ -7,11 +7,10 @@ from owr import params
 
 
 class Subset(torch.utils.data.Dataset):
-    # bug here
     def __init__(self, dataset, indexes, transform):
         """
         :param dataset: the whole dataset
-        :param indices: indices to take and put in the subset
+        :param indexes: indexes to take and put in the subset
         """
         self.dataset = dataset
         self.indexes = indexes
