@@ -36,7 +36,7 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
                     x /= torch.norm(x, p=2)
                 ma = torch.sum(x, dim=0)
                 means[k] += ma
-            means[k] = means[k] / len(counter)  # average
+            means[k] = means[k] / counter  # average
             means[k] = means[k] / means[k].norm()
     else:
         means = mean
