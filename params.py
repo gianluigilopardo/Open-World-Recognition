@@ -4,7 +4,7 @@ DEVICE = 'cuda'  # 'cuda' or 'cpu'
 BATCH_SIZE = 128
 
 NUM_CLASSES = 100  # CIFAR100
-NUM_TASKS = 100  # FULL RESNET  # 10  # number of batches data is splitted
+NUM_TASKS = 10  # number of batches data is splitted
 TASK_SIZE = int(NUM_CLASSES/NUM_TASKS)  # size of each task
 
 NUM_EPOCHS = 70

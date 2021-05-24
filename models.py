@@ -10,7 +10,7 @@ def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
     sigmoid = torch.nn.Sigmoid()
     outputs, old_outputs, onehot_labels = outputs.to(params.DEVICE), old_outputs.to(params.DEVICE), \
                                           onehot_labels.to(params.DEVICE)
-    print('outputs: ' + str(outputs))
+    # print('outputs: ' + str(outputs))
     classes = utils.get_classes(train_splits, task)
     if task == 0:
         loss = criterion(input=outputs, target=onehot_labels)
