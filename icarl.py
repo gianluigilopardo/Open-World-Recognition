@@ -43,7 +43,7 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
     print('means: ' + str(means))
     for data in phi_x:
         pred = np.argmin(np.sqrt(np.sum((data.data.cpu().numpy() - means.data.cpu().numpy()) ** 2, axis=1)))
-        print('pred: ' + str(pred))
+        # print('pred: ' + str(pred))
         preds.append(pred)
     return torch.tensor(preds), means
 

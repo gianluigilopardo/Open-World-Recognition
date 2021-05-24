@@ -7,6 +7,7 @@ from owr import params
 
 
 class Subset(torch.utils.data.Dataset):
+    # bug here
     def __init__(self, dataset, indexes, transform):
         """
         :param dataset: the whole dataset
