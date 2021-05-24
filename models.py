@@ -27,7 +27,7 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
         running_corrects = 0
         for images, labels, _ in data_loader:
             images = images.float().to(params.DEVICE)
-            labels = labels.float().to(params.DEVICE)  # .long()
+            labels = labels.long().to(params.DEVICE)  # .long()
             # print('labels: ' + str(labels))
             onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE)
             mapped_labels = utils.map_splits(labels, classes)
