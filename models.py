@@ -24,7 +24,7 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
     for epoch in range(params.NUM_EPOCHS):
         length = 0
         running_corrects = 0
-        for images, labels, idx in data_loader:
+        for images, labels in data_loader:
             images = images.float().to(params.DEVICE)
             labels = labels.long().to(params.DEVICE)  # .long() 
             onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE)
