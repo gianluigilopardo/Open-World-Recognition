@@ -42,7 +42,7 @@ def map_splits(labels, splits):
 
 def get_classes(train_splits, task):
     classes = []
-    for i, x_split in enumerate(train_splits[:int(task / params.NUM_CLASSES * params.TASK_SIZE) + 1]):
+    for i, x_split in enumerate(train_splits[:int(task / params.TASK_SIZE) + 1]):
         x_split = np.array(x_split)  # classes in the current split
         classes = np.concatenate((classes, x_split), axis=None)  # classes in all splits up to now
     return classes.astype(int)

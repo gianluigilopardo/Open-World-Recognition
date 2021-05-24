@@ -69,6 +69,7 @@ def update_representation(train_dataset, exemplars, model, task, train_indexes, 
     print('len(data_idx): ' + str(len(data_idx)))
     subset = Subset(train_dataset, data_idx,  
                     train_transformer)
+    print('len(subset):', str(len(subset)))
     data_loader = DataLoader(subset, batch_size=params.BATCH_SIZE, num_workers=params.NUM_WORKERS,
                              shuffle=True)
     optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MOMENTUM,
