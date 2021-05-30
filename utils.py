@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import random
 
-from owr import params
+import params
 SEED = 42
 
 
