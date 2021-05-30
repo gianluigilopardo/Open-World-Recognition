@@ -76,6 +76,7 @@ def update_representation(train_dataset, exemplars, model, task, train_indexes, 
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE, gamma=params.GAMMA)
     old_model = copy.deepcopy(model)  # we keep the current (old) model
     old_model.train(False)  # = .test()
+    model.train(True)
     model = models.train_network(classes, model, old_model, optimizer, data_loader, scheduler, task, train_splits)
     return model
 
