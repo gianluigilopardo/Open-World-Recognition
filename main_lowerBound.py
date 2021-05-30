@@ -16,7 +16,8 @@ import icarl
 cifar = datasets.cifar.CIFAR100
 train_dataset = Dataset(dataset=cifar, train=True)
 test_dataset = Dataset(dataset=cifar, train=False)
-
+print(type(train_dataset.__getitem__(0)))
+nthtt
 # splits
 train_splits = train_dataset.splits
 test_splits = test_dataset.splits
@@ -68,7 +69,7 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     col = []
     for i, x in enumerate(train_splits[:int(task / params.NUM_CLASSES * params.TASK_SIZE)+1]):
         v = np.array(x)
-        col = np.concatenate((col, v), axis=None)
+        col = np.concatenate((col, v), axis=None) 
         col = col.astype(int)
     mean = None
     total = 0.0
