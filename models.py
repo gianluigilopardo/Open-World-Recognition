@@ -28,8 +28,6 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
         for images, labels, _ in data_loader:
             images = images.float().to(params.DEVICE)
             labels = labels.long().to(params.DEVICE)  # .long()
-            if( (task>0) and (epoch%10 == 0) ):
-                print('labels: ' + str(labels))
             onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE)
             mapped_labels = utils.map_splits(labels, classes)
             if( (task>0) and (epoch%10 == 0) ):
@@ -45,7 +43,9 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
             _, preds = torch.max(cut_outputs.data, 1)
             if((task>0) and (epoch%10 == 0)):
+                print('classes: ' + str(classes[None, :]))
                 print('preds: ' + str(preds))
+                print('len(cut_outputs): ', len(cut_outputs))
             running_corrects += torch.sum(preds == mapped_labels.data).data.item()
             length += len(images)
             loss.backward()
