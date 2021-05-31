@@ -23,6 +23,9 @@ def splitter(): #a
 
 
 def map_splits(labels, splits):
+    """splits restituisce 10 vettori da 10 nel caso base, che poi sarebbero numtask vettori di tasksize, e map splits mi mappa
+    le classi dei vettori
+    """
     mapped_labels = []
     splits_list = list(splits)
     for label in labels:
@@ -38,7 +41,7 @@ def get_classes(train_splits, task):
     return classes.astype(int)
 
 
-def get_indexes(train_indexes, exemplars):
+def get_indexes(train_indexes, exemplars): #indexes of the task
     data_idx = np.array(train_indexes)
     for image_class in exemplars:
         if image_class is not None:
