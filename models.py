@@ -45,7 +45,7 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             if((task>0) and (epoch%10 == 0)):
                 print('classes: ' + str(classes[None, :]))
                 print('preds: ' + str(preds))
-                print('len(cut_outputs): ', len(cut_outputs))
+                print('cut_outputs: ', cut_outputs)
             running_corrects += torch.sum(preds == mapped_labels.data).data.item()
             length += len(images)
             loss.backward()
