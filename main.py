@@ -66,7 +66,8 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
   model = ModelRoutines.train_model(model, loss_function, optimizer,
                                     scheduler, train_loader,params.DEVICE,
                                     params.NUM_EPOCHS, binary)
-
+#### EVALUATION
+  print('\n EVALUATION \n')
   classes = []
   for i, x in enumerate(splits[:int(task / params.TASK_SIZE)+1]):
     v = np.array(x)
@@ -77,8 +78,9 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
   running_corrects = 0.0
   for img, lbl, _ in train_loader:
     img = img.float().to(params.DEVICE)
-    preds = model(img)
-    _, preds = torch.max(preds, 1)
+    outputs = model(img)
+    cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
+    _, preds = torch.max(cut_outputs.data, 1)
     preds = preds.to(params.DEVICE)
     labels = utils.map_splits(lbl, classes).to(params.DEVICE)
     total += len(lbl)
@@ -93,8 +95,9 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
   tot_lab = []
   for img, lbl, _ in test_loader:
     img = img.float().to(params.DEVICE)
-    preds = model(img)
-    _, preds = torch.max(preds, 1)
+    outputs = model(img)
+    cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
+    _, preds = torch.max(cut_outputs.data, 1)
     preds = preds.to(params.DEVICE)
     labels = utils.map_splits(lbl, classes).to(params.DEVICE)
     tot_preds = np.concatenate((tot_preds, preds.data.cpu().numpy()))
@@ -105,5 +108,5 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     # print('running_corrects: ' + str(running_corrects))
   accuracy = float(running_corrects / total)
   print(f'task: {task}', f'test accuracy = {accuracy}')
-  cf = confusion_matrix(tot_lab, tot_preds)
-  df_cm = pd.DataFrame(cf, range(task + params.TASK_SIZE), range(task + params.TASK_SIZE))
+  # cf = confusion_matrix(tot_lab, tot_preds)
+  # df_cm = pd.DataFrame(cf, range(task + params.TASK_SIZE), range(task + params.TASK_SIZE))
