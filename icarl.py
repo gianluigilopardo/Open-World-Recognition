@@ -1,11 +1,13 @@
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import copy
+import numpy as np
+from numpy import random
 
 import models
 import params
 from dataset import *
-import utils
+
 
 # Algorithm 1 iCaRL CLASSIFY
 def classify(images, exemplars, model, task, train_dataset, mean=None):
