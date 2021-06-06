@@ -44,7 +44,8 @@ optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MO
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE,
                                                  gamma=params.GAMMA)  # allow to change the LR at predefined epochs
 # loss
-loss_function = nn.CrossEntropyLoss() # BCEWithLogitsLoss() #
+loss_function = nn.BCEWithLogitsLoss() # CrossEntropyLoss() #
+binary = 1
 # Run
 exemplars = [None] * params.NUM_CLASSES
 
@@ -63,7 +64,8 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
                             batch_size=params.BATCH_SIZE, shuffle=True)
 
   model = ModelRoutines.train_model(model, loss_function, optimizer,
-                                    scheduler, train_loader,params.DEVICE, params.NUM_EPOCHS)
+                                    scheduler, train_loader,params.DEVICE,
+                                    params.NUM_EPOCHS, binary)
 
   classes = []
   for i, x in enumerate(splits[:int(task / params.TASK_SIZE)+1]):
@@ -76,6 +78,7 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
   for img, lbl, _ in train_loader:
     img = img.float().to(params.DEVICE)
     preds = model(img)
+    _, preds = torch.max(preds, 1)
     preds = preds.to(params.DEVICE)
     labels = utils.map_splits(lbl, classes).to(params.DEVICE)
     total += len(lbl)
@@ -91,6 +94,7 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
   for img, lbl, _ in test_loader:
     img = img.float().to(params.DEVICE)
     preds = model(img)
+    _, preds = torch.max(preds, 1)
     preds = preds.to(params.DEVICE)
     labels = utils.map_splits(lbl, classes).to(params.DEVICE)
     tot_preds = np.concatenate((tot_preds, preds.data.cpu().numpy()))

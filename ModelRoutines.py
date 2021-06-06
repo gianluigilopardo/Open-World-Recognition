@@ -2,7 +2,7 @@
 import torch
 import torch.nn.functional as F
 
-def train_model(model, loss_function, optimizer, scheduler, train_loader,device, num_epochs):
+def train_model(model, loss_function, optimizer, scheduler, train_loader,device, num_epochs, binary):
     n_total_steps = len(train_loader)
     print(f"The total number of steps for each epoch will be {n_total_steps}")
     for epoch in range(num_epochs):
@@ -12,6 +12,8 @@ def train_model(model, loss_function, optimizer, scheduler, train_loader,device,
             images = images.to(device)
             labels = labels.to(device)
             labels_1h = F.one_hot(labels, num_classes = 100).float()
+            if binary ==1 :
+                labels = labels_1h
 
             # Forward pass
             outputs = model(images)
