@@ -30,22 +30,15 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
             labels = labels.long().to(params.DEVICE)  # .long()
             onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE)
             mapped_labels = utils.map_splits(labels, classes)
-            if( (task>0) and (epoch%10 == 0) ):
-                print('mapped_labels: ' + str(mapped_labels))
             optimizer.zero_grad()
             # features=False : use fully connected layer (see ResNet)
             old_outputs = old_model(images, features=False)
             outputs = model(images, features=False)
-            if((task>0) and (epoch%10 == 0)):
-                print('outputs: ' + str(outputs))
+
             loss = compute_loss(outputs, old_outputs, onehot_labels, task, train_splits)
             # cut_outputs take only the first #task outputs: see simplification in main
             cut_outputs = np.take_along_axis(outputs.to(params.DEVICE), classes[None, :], axis=1).to(params.DEVICE)
             _, preds = torch.max(cut_outputs.data, 1)
-            if((task>0) and (epoch%10 == 0)):
-                print('classes: ' + str(classes[None, :]))
-                print('preds: ' + str(preds))
-                print('cut_outputs: ', cut_outputs)
             running_corrects += torch.sum(preds == mapped_labels.data).data.item()
             length += len(images)
             loss.backward()
