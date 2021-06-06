@@ -100,6 +100,9 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     _, preds = torch.max(cut_outputs.data, 1)
     preds = preds.to(params.DEVICE)
     labels = utils.map_splits(lbl, classes).to(params.DEVICE)
+    print(f"Prediction : {preds}")
+    print(f"Groud Truth : {labels}")
+
     tot_preds = np.concatenate((tot_preds, preds.data.cpu().numpy()))
     tot_lab = np.concatenate((tot_lab, labels.data.cpu().numpy()))
 
