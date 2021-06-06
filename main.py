@@ -11,9 +11,6 @@ import os
 import logging
 import sys
 
-# if not os.path.isdir('./owr'):
-#   !git clone -b icarl https://gianluigilopardo:G14nlu1g1!@github.com/gianluigilopardo/Open-World-Recognition.git
-#   !mv 'Open-World-Recognition' 'owr'
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
