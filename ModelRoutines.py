@@ -23,7 +23,7 @@ def train_model(model, loss_function, optimizer, scheduler, train_loader,device,
             optimizer.step()
             scheduler.step()
 
-            if (i + 1) % (n_total_steps/(4*7)) == 0:
+            if (i + 1) % (n_total_steps/4) == 0:
                 print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{n_total_steps}], Loss: {loss.item():.4f}')
     return model
 
