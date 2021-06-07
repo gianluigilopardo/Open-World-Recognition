@@ -17,6 +17,9 @@ from dataset import *
 import icarl
 import ModelRoutines
 
+print(f"learning rate : {params.LR}")
+print(f"learning rate schedule epochs: {params.STEP_SIZE}")
+
 cifar = datasets.cifar.CIFAR100
 # Initializations
 # transformers
