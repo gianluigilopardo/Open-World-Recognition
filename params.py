@@ -11,7 +11,7 @@ TASK_SIZE = int(NUM_CLASSES/NUM_TASKS)  # size of each task
 NUM_EPOCHS = 70
 
 WEIGHT_DECAY = 0.00001
-LR = 0.01
+LR = 0.1
 STEP_SIZE = [49, 63]
 GAMMA = 1 / 5
 

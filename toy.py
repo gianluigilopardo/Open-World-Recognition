@@ -57,23 +57,27 @@ exemplars = [None] * params.NUM_CLASSES
 
 test_indexes = []
 accs = []
-for task in range(0, 1) : # params.NUM_CLASSES, params.TASK_SIZE):
-  train_indexes = utils.get_task_indexes(train_dataset, task)
-  # print(f"The number of training samples is : {len(train_indexes)}")
-  test_indexes = test_indexes + utils.get_task_indexes(test_dataset, task)
-  # print(f"The number of testing samples is : {len(test_indexes)}")
+# for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
+#   train_indexes = utils.get_task_indexes(train_dataset, task)
+#   # print(f"The number of training samples is : {len(train_indexes)}")
+#   test_indexes = test_indexes + utils.get_task_indexes(test_dataset, task)
+#   # print(f"The number of testing samples is : {len(test_indexes)}")
+#
+#   train_subset = Subset(train_dataset, train_indexes, transform=train_transformer)
+#   test_subset = Subset(test_dataset, test_indexes, transform=test_transformer)
+#
+#   train_loader = DataLoader(train_subset, num_workers=params.NUM_WORKERS,
+#                             batch_size=params.BATCH_SIZE, shuffle=True)
+#   test_loader = DataLoader(test_subset, num_workers=params.NUM_WORKERS,
+#                             batch_size=params.BATCH_SIZE, shuffle=True)
+#
+#   model = ModelRoutines.train_model(model, loss_function, optimizer,
+#                                     scheduler, train_loader,params.DEVICE,
+#                                     params.NUM_EPOCHS, binary, rearranged_labels)
+#
+#
+#   ACC = ModelRoutines.evaluate_model(model, test_loader, params.DEVICE)
 
-  train_subset = Subset(train_dataset, train_indexes, transform=train_transformer)
-  test_subset = Subset(test_dataset, test_indexes, transform=test_transformer)
-
-  train_loader = DataLoader(train_subset, num_workers=params.NUM_WORKERS,
-                            batch_size=params.BATCH_SIZE, shuffle=True)
-  test_loader = DataLoader(test_subset, num_workers=params.NUM_WORKERS,
-                            batch_size=params.BATCH_SIZE, shuffle=True)
-
-  model = ModelRoutines.train_model(model, loss_function, optimizer,
-                                    scheduler, train_loader,params.DEVICE,
-                                    params.NUM_EPOCHS, binary)
-
-
-  ACC = ModelRoutines.evaluate_model(model, test_loader, params.DEVICE)
+l = torch.nn.Linear(in_features=2,out_features=4)
+l.weight[:2, :2] = torch.zeros(2,2)
+print(l.weight)
