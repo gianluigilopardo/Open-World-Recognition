@@ -1,7 +1,7 @@
 import os
 import logging
 import sys
-
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision import datasets
@@ -47,7 +47,8 @@ binary = 1
 exemplars = [None] * params.NUM_CLASSES
 
 test_indexes = []
-accs = []
+train_accs = []
+test_accs = []
 for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     train_indexes = utils.get_task_indexes(train_dataset, task)
     test_indexes = test_indexes + utils.get_task_indexes(test_dataset, task)
@@ -83,7 +84,7 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
         running_corrects += torch.sum(preds == labels.data).data.item()
     accuracy = float(running_corrects / total)
     print(f'task: {task}', f'train accuracy = {accuracy}')
-    accs.append(accuracy)
+    train_accs.append(accuracy)
 
     total = 0.0
     running_corrects = 0.0
@@ -96,8 +97,6 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
         _, preds = torch.max(cut_outputs.data, 1)
         preds = preds.to(params.DEVICE)
         labels = utils.map_splits(lbl, classes).to(params.DEVICE)
-        print(f"Prediction : {preds}")
-        print(f"Groud Truth : {labels}")
 
         tot_preds = np.concatenate((tot_preds, preds.data.cpu().numpy()))
         tot_lab = np.concatenate((tot_lab, labels.data.cpu().numpy()))
@@ -106,6 +105,14 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
         running_corrects += torch.sum(preds == labels.data).data.item()
         # print('running_corrects: ' + str(running_corrects))
     accuracy = float(running_corrects / total)
+    test_accs.append(accuracy)
     print(f'task: {task}', f'test accuracy = {accuracy}')
     # cf = confusion_matrix(tot_lab, tot_preds)
     # df_cm = pd.DataFrame(cf, range(task + params.TASK_SIZE), range(task + params.TASK_SIZE))
+
+### PLOT
+plt.plot(train_accs, 'go-', label='training accuracies', linewidth=2)
+plt.plot(test_accs, 'rs-', label='testing accuracies')
+plt.legend()
+plt.show()
+

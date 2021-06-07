@@ -1,7 +1,7 @@
 import os
 import logging
 import sys
-
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision import datasets
@@ -78,6 +78,11 @@ accs = []
 #
 #   ACC = ModelRoutines.evaluate_model(model, test_loader, params.DEVICE)
 
-l = torch.nn.Linear(in_features=2,out_features=4)
-l.weight[:2, :2] = torch.zeros(2,2)
-print(l.weight)
+# l = torch.nn.Linear(in_features=2,out_features=4)
+# l.weight[:2, :2] = torch.zeros(2,2)
+# print(l.weight)
+
+plt.plot([1, 2, 3], 'go-', label='line 1', linewidth=2)
+plt.plot([1, 4, 9], 'rs-', label='line 2')
+plt.legend()
+plt.show()
