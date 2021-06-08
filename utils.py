@@ -85,11 +85,7 @@ def trainLWF(task, train_loader, train_splits):
         for images, labels, _ in train_loader:
             images = images.float().to(params.DEVICE)
             labels = labels.to(params.DEVICE)
-            print("\nLabels\n", labels)
-            print("\nCol\n", col)
-            mappedLabels = mapFunction(labels,
-                                       col)  # mapped labels è una matrice di 128 elementi in cui ogni elemento corrisponde all'indice
-            print("Mapped labels ", mappedLabels)
+            mappedLabels = mapFunction(labels,col)  # mapped labels è una matrice di 128 elementi in cui ogni elemento corrisponde all'indice
 
             onehot_labels = torch.eye(100)[labels].to(
                 params.DEVICE)  # it creates the one-hot-encoding list for the labels; needed for BCELoss
