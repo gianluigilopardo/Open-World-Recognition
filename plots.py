@@ -5,7 +5,7 @@ def show_example(img, label):
     print('Label: ', train_dataset.classes[label], "("+str(label)+")")
     print(img.shape)
     img = img.permute(1,2,0)
-    print(img.shape)
+    print(img.shape)#njnj
     plt.imshow(img) #channel are at the last in matplotlib where it was at front in tensors
     #plt.show()
 
