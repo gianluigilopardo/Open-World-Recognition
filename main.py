@@ -45,11 +45,12 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE,
                                                  gamma=params.GAMMA)  # allow to change the LR at predefined epochs
 # loss
 loss_function = nn.BCEWithLogitsLoss()  # CrossEntropyLoss() #
-binary = 1
+binary = 1 # da eliminare
 # Run
-exemplars = [None] * params.NUM_CLASSES
+exemplars = [None] * params.NUM_CLASSES # da eliminare
 
 test_indexes = []
+# vectors for accuracy curves
 train_accs = []
 test_accs = []
 for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
@@ -114,6 +115,8 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     # df_cm = pd.DataFrame(cf, range(task + params.TASK_SIZE), range(task + params.TASK_SIZE))
 
 ### PLOT
+print(f"Training accuracies : {train_accs}")
+print(f"Testing accuracies : {test_accs}")
 plt.plot(train_accs, 'go-', label='training accuracies', linewidth=2)
 plt.plot(test_accs, 'rs-', label='testing accuracies')
 plt.legend()

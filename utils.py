@@ -3,8 +3,8 @@ import torch
 import random
 
 import params
-SEED = 42
-
+SEED = 24
+# seeds : 42, 24, ... , ... , ...
 
 def get_classes_names(dataset):
     return list(dataset.class_to_idx.keys())
