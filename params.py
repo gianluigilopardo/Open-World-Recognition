@@ -1,7 +1,6 @@
 import random
-import torch
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = 'cuda'  # 'cuda' or 'cpu'
 BATCH_SIZE = 128
 
 NUM_CLASSES = 100  # CIFAR100
@@ -17,7 +16,7 @@ GAMMA = 1 / 5
 
 SEED = 42
 
-NUM_WORKERS = 4 if torch.cuda.is_available() else 0
+NUM_WORKERS = 4
 
 K = 2000
 MOMENTUM = 0.9
