@@ -71,17 +71,18 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     train_indexes = utils.get_task_indexes(train_dataset, task)
     test_indexes = test_indexes + utils.get_task_indexes(test_dataset, task)
 
-train_subset = Subset(train_dataset, train_indexes, transform=train_transformer)
-test_subset = Subset(test_dataset, test_indexes, transform=test_transformer)
+    train_subset = Subset(train_dataset, train_indexes, transform=train_transformer)
+    test_subset = Subset(test_dataset, test_indexes, transform=test_transformer)
 
-train_loader = DataLoader(train_subset, num_workers=params.NUM_WORKERS,
+    train_loader = DataLoader(train_subset, num_workers=params.NUM_WORKERS,
                           batch_size=params.BATCH_SIZE, shuffle=True)
-test_loader = DataLoader(test_subset, num_workers=params.NUM_WORKERS,
+    test_loader = DataLoader(test_subset, num_workers=params.NUM_WORKERS,
                          batch_size=params.BATCH_SIZE, shuffle=True)
 
-if (task == 0):
-    torch.save(model, 'resNet_task{0}.pt'.format(task))
+    if (task == 0):
+      torch.save(model, 'resNet_task{0}.pt'.format(task))
 
-# utils.trainLWF(task, train_loader, splits)
-loss_accuracy = utils.testLWF(task, test_loader, splits)
-metrics[int(task / 10)] = loss_accuracy  # pars_task[i] = (accuracy, loss) at i-th task
+    models.trainLWF(task, train_loader, splits)
+    loss_accuracy = models.testLWF(task, test_loader, splits)
+    metrics[int(task / 10)] = loss_accuracy  # pars_task[i] = (accuracy, loss) at i-th task
+
