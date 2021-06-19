@@ -7,12 +7,12 @@ import utils
 
 def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
     criterion = torch.nn.BCEWithLogitsLoss()
-    m = torch.nn.Sigmoid()
+    m = torch.nn.Sigmoid() #ultimo layer da aggiungere alla rete per la parte di feature extractor
     outputs, old_outputs, onehot_labels = outputs.to(params.DEVICE), old_outputs.to(params.DEVICE), \
                                           onehot_labels.to(params.DEVICE)
     classes = utils.get_classes(train_splits, task-1)
     if task == 0:
-        loss = criterion(input=outputs, target=onehot_labels)
+        loss = criterion(input=outputs, target=onehot_labels) #se sono nella prima task allora faccio solo classificazione con BCE
     if task > 0:
         target = onehot_labels.clone().to(params.DEVICE)
         target[:, classes] = m(old_outputs[:, classes]).to(params.DEVICE)
@@ -27,11 +27,11 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
         for images, labels, idx in data_loader:
             images = images.float().to(params.DEVICE)  #"""convert image into float vector"""
             labels = labels.long().to(params.DEVICE)  # .long() #convert in long
-            onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE) #che serve?
+            onehot_labels = torch.eye(params.NUM_CLASSES)[labels].to(params.DEVICE) #serve per la BCELoss
             mapped_labels = utils.map_splits(labels, classes)
-            optimizer.zero_grad()
+            optimizer.zero_grad() #azzero i gradienti
             # features=False : use fully connected layer (see ResNet)
-            old_outputs = old_model(images, features=False)  
+            old_outputs = old_model(images, features=False)
             outputs = model(images, features=False)
             loss = compute_loss(outputs, old_outputs, onehot_labels, task, train_splits)
             # cut_outputs take only the first #task outputs: see simplification in main
@@ -50,19 +50,19 @@ def train_network(classes, model, old_model, optimizer, data_loader, scheduler, 
 
 def trainLWF(task, train_loader, train_splits):
     print(f'task = {task} ')
-    resNet = torch.load('resNet_task' + str(task) + '.pt').train(True)
-    old_resNet = torch.load('resNet_task' + str(task) + '.pt').train(False)
+    resNet = torch.load('resNet_task' + str(task) + '.pt').train(True) #alleno il modello precedentemente salvato e load tutti i tensors sulla CPU di default ma qui dovrebbe caricarli su GPU
+    old_resNet = torch.load('resNet_task' + str(task) + '.pt').train(False) #valuto il modello appena allenato
 
     # Define the parameters for traininig:
     optimizer = torch.optim.SGD(resNet.parameters(), lr=params.LR, momentum=params.MOMENTUM,
-                                weight_decay=params.WEIGHT_DECAY)
+                                weight_decay=params.WEIGHT_DECAY) #ottimizzo modello
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE,
                                                      gamma=params.GAMMA)  # allow to change the LR at predefined epochs
     # Decays the learning rate of each parameter group by gamma once the number of epoch reaches one of the milestones. Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler. When last_epoch=-1, sets initial lr as lr.
     # GAMMA: Multiplicative factor of learning rate decay.
     current_step = 0
 
-    col = np.array(train_splits[int(task / 10)]).astype(int)
+    col = np.array(train_splits[int(task / 10)]).astype(int) #salvo in un vettore le classi apparteneti alla task
     print("train col = ", col)
     print("train col = ", col[None, :])
     ##Train phase
