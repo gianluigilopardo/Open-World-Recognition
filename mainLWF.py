@@ -53,6 +53,8 @@ print('splits: ' + str(splits))
 
 # model
 model = ResNet.resnet32(num_classes=params.NUM_CLASSES).to(params.DEVICE)
+print(type(model))
+
 # simplification: we initialize the network with all the classes
 optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MOMENTUM, #SGD with momentum renders some speed to the optimization and also helps escape local minima better. Adam is great, it's much faster than SGD, the default hyperparameters usually works fine, but it has its own pitfall too. Many accused Adam has convergence problems that often SGD + momentum can converge better with longer training time. We often see a lot of papers in 2018 and 2019 were still using SGD.
                             weight_decay=params.WEIGHT_DECAY)
