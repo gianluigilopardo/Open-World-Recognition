@@ -1,11 +1,13 @@
 # This file cointains routines for training and evaluation of the incremental models
 import torch
 import torch.nn.functional as F
-import params
-import utils
-from dataset import *
 from torch.utils.data import DataLoader
 from torchvision import transforms
+
+from owr import params
+from owr import utils
+from owr.dataset import *
+
 
 def train_model(model, loss_function, optimizer, scheduler, train_loader,device, num_epochs, binary):
     n_total_steps = len(train_loader)

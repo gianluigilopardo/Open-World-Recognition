@@ -8,14 +8,15 @@ from torchvision import datasets
 import pandas as pd
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
+
 import torch.nn as nn
-import ResNet
-import models
-import params
-import utils
-from dataset import *
-import icarl
-import ModelRoutines
+from owr import ResNet
+from owr import models
+from owr import params
+from owr import utils
+from owr.dataset import *
+from owr import icarl
+from owr import ModelRoutines
 
 print(f"learning rate : {params.LR}")
 print(f"learning rate schedule epochs: {params.STEP_SIZE}")

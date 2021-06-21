@@ -1,8 +1,11 @@
 import torch
 import numpy as np
 
-import params
-import utils
+from owr import params
+from owr import utils
+
+# import params
+# import utils
 
 
 def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
