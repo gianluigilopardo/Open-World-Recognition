@@ -8,6 +8,7 @@ from numpy import random
 from owr import utils
 from owr import params
 from owr.dataset import *
+from owr import models
 
 # import utils
 # import params
