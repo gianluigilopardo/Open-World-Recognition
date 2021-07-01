@@ -7,7 +7,7 @@ NUM_CLASSES = 100  # CIFAR100
 NUM_TASKS = 10  # number of batches data is splitted
 TASK_SIZE = int(NUM_CLASSES/NUM_TASKS)  # size of each task
 
-NUM_EPOCHS = 1#70
+NUM_EPOCHS = 70
 
 WEIGHT_DECAY = 0.00001
 LR = 2
