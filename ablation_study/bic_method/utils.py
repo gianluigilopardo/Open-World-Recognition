@@ -2,7 +2,8 @@ import numpy as np
 import torch
 import random
 import math
-from owr.ablation_study import params
+from owr.ablation_study.bic_method import params
+
 from sklearn.model_selection import train_test_split
 
 SEED = 42
