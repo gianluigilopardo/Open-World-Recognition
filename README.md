@@ -7,8 +7,9 @@ This work is carried out along two main axes:
     * *open set*: to recognise whether the classes belong to the knowledge that the model already possesses.
 
 Referring to the paper, the repository is organised as follows:
-  * *baseline_analysis* contains code for LwF, iCaRL 
+  * *baseline* contains code for Finetuning, LwF and iCaRL, referring to Sections 4.1 and 4.2 
   * *ablation_study* refers to Section 4.3
+  * *open_world* refers to Sectiion 4.4
   * *our_modifications* refers to Section 4.5
  
 
