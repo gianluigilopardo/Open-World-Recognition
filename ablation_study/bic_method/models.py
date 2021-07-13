@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 
-from owr.ablation_study import params
-from owr.ablation_study import utils
+from owr.ablation_study.bic_method import utils
+from owr.ablation_study.bic_method import params
 
 
 def compute_loss(outputs, old_outputs, onehot_labels, task, train_splits):
