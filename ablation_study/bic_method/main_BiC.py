@@ -12,10 +12,6 @@ from sklearn.model_selection import train_test_split
 import seaborn as sn
 import torch.nn as nn
 
-if not os.path.isdir('./owr'):
-   !git clone https://gianluigilopardo/Open-World-Recognition.git
-   !mv 'Open-World-Recognition' 'owr'
-
 # our modules
 from owr import BiC
 from owr.dataset import *

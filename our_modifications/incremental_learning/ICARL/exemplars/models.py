@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 import math
-from owr import params
-from owr import utils
+from owr.our_modifications.incremental_learning.ICARL.exemplars import params
+from owr.our_modifications.incremental_learning.ICARL.exemplars import utils
 # import params
 # import utils
 from torch.nn import functional as F

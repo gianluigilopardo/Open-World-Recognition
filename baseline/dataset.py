@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from PIL import Image
 
-from owr import utils
-from owr import params
+from owr.baseline import utils
+from owr.baseline import params
 
 
 class Subset(torch.utils.data.Dataset):

@@ -11,18 +11,13 @@ import torch.nn as nn
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 
-#COLAB:
 
-if not os.path.isdir('./owr'):
-  !git clone -b icarl https://andrerubeis:Ruby199711@github.com/gianluigilopardo/Open-World-Recognition.git
-  !mv 'Open-World-Recognition' 'owr'
-
-from owr import ResNet
-from owr import params
-from owr import utils
-from owr import models
-from owr.dataset import *
-from owr import icarl
+from owr.baseline import ResNet
+from owr.baseline import params
+from owr.baseline import utils
+from owr.baseline import models
+from owr.baseline.dataset import *
+from owr.baseline import icarl
 
 #PYCHARM:
 

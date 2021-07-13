@@ -3,8 +3,8 @@ import math
 import numpy as np
 import torch.nn as nn
 import torch
-from owr import params
-from owr import utils
+from owr.our_modifications.open_world import params
+from owr.our_modifications.open_world import utils
 
 soft_max = nn.Softmax(dim=1)
 relu = nn.ReLU()

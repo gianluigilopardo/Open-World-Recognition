@@ -6,10 +6,10 @@ import pandas as pd
 from numpy import random
 import time
 
-from owr import utils
-from owr import params
-from owr.dataset import *
-from owr import models 
+from owr.our_modifications.incremental_learning.ICARL.knn import utils
+from owr.our_modifications.incremental_learning.ICARL.knn import params
+from owr.our_modifications.incremental_learning.ICARL.knn.dataset import *
+from owr.our_modifications.incremental_learning.ICARL.knn import models
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier

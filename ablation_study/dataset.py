@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from PIL import Image
 from torchvision.transforms import ToPILImage  # built-in function
-from owr import utils
-from owr import params
+from owr.ablation_study import utils
+from owr.ablation_study import params
 
 # import utils
 # import params

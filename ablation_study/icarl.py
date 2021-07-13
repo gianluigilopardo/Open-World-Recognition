@@ -6,10 +6,10 @@ import pandas as pd
 from numpy import random
 import time
 
-from owr import utils
-from owr import params
-from owr.dataset import *
-from owr import models 
+from owr.ablation_study import utils
+from owr.ablation_study import params
+from owr.ablation_study.dataset import *
+from owr.ablation_study import models
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier

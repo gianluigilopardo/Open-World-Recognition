@@ -4,9 +4,9 @@ import copy
 import numpy as np
 from numpy import random
 
-from owr import models
-from owr import params
-from owr.dataset import *
+from owr.baseline import models
+from owr.baseline import params
+from owr.baseline.dataset import *
 
 
 # Algorithm 1 iCaRL CLASSIFY

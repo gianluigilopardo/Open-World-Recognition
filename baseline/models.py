@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 
-from owr import params
-from owr import utils
+from owr.baseline import params
+from owr.baseline import utils
 
 # import params
 # import utils

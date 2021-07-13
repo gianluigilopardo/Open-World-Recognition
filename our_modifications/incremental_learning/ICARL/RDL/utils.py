@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import random
 
-from owr import params
+from owr.our_modifications.incremental_learning.ICARL.RDL import params
 # import params
 SEED = 24
 # seeds : 42, 24, ... , ... , ...

@@ -13,18 +13,14 @@ from sklearn.model_selection import train_test_split
 import seaborn as sn
 import torch.nn as nn
 
-if not os.path.isdir('./owr'):
-   !git clone https://gianluigilopardo/Open-World-Recognition.git
-   !mv 'Open-World-Recognition' 'owr'
-
-from owr import BiC
-from owr import ResNet
-from owr import models
-from owr import params
-from owr import utils
-from owr.dataset import *
-from owr import icarl
-from owr import ThresholdsLearner #va caricato nel branch main
+from owr.our_modifications.open_world import BiC
+from owr.our_modifications.open_world import ResNet
+from owr.our_modifications.open_world import models
+from owr.our_modifications.open_world import params
+from owr.our_modifications.open_world import utils
+from owr.our_modifications.open_world.dataset import *
+from owr.our_modifications.open_world import icarl
+from owr.our_modifications.open_world import ThresholdsLearner #va caricato nel branch main
 from collections import defaultdict
 
 # This script is the main for running the class-specific learnd rejection strategy for BiC method.

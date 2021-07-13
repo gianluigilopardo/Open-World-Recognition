@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import random
 import math
-from owr import params
+from owr.open_world import params
 from sklearn.model_selection import train_test_split
 
 SEED = 42

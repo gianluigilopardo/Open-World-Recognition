@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from PIL import Image
 from torchvision.transforms import ToPILImage  # built-in function
-from owr import utils
-from owr import params
+from owr.our_modifications.incremental_learning.ICARL.knn import utils
+from owr.our_modifications.incremental_learning.ICARL.knn import params
 
 # import utils
 # import params

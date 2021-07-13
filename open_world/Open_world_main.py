@@ -13,18 +13,14 @@ import logging
 import sys
 import torch.nn as nn
 
-if not os.path.isdir('./owr'):
-   !git clone https://gianluigilopardo/Open-World-Recognition.git
-   !mv 'Open-World-Recognition' 'owr'
-
-from owr import BiC
-from owr import ResNet
-from owr import models
-from owr import params
-from owr import utils
-from owr.dataset import *
-from owr import icarl
-from owr import ModelRoutines
+from owr.open_world import BiC
+from owr.open_world import ResNet
+from owr.open_world import models
+from owr.open_world import params
+from owr.open_world import utils
+from owr.open_world.dataset import *
+from owr.open_world import icarl
+from owr.open_world import ModelRoutines
 from collections import defaultdict
 
 # This script is the main for running the fixed-threshold rejection strategy both for

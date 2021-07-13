@@ -9,11 +9,12 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import torch.nn as nn
-import ResNet
-import models
-import params
-import utils
-from dataset import *
+
+from owr.baseline import ResNet
+from owr.baseline import models
+from owr.baseline import params
+from owr.baseline import utils
+from owr.baseline.dataset import *
 
 ###### This script is the main for running finetuning on CIFAR 100 dataset
 # remeber to set lr = 2 in params before running.
