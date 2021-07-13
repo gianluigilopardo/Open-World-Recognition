@@ -2,13 +2,20 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 import copy
 import numpy as np
+import pandas as pd
 from numpy import random
-
+import time
 
 from owr import utils
 from owr import params
 from owr.dataset import *
-from owr import models
+from owr import models 
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+import math
+
 
 # import utils
 # import params
@@ -17,7 +24,53 @@ from owr import models
 
 
 # Algorithm 1 iCaRL CLASSIFY
-def classify(images, exemplars, model, task, train_dataset, mean=None):
+def classify(images, exemplars, model, task, train_dataset, mean=None, classifier='nme', clf_params=None):
+    if classifier == 'nme':
+        preds, mean = classify_nme(images, exemplars, model, task, train_dataset, mean)
+        return preds, mean
+    else:
+        preds, mean = classify_models(images, exemplars, model, task, train_dataset, mean, classifier, clf_params)
+        return preds, mean
+
+def classify_models(images, exemplars, model, task, train_dataset, cv, classifier, clf_params):
+    splits = utils.splitter()
+    model.train(False)
+    m = torch.nn.Softmax(dim=1)
+    with torch.no_grad():
+        images = images.float().to(params.DEVICE)
+        x_test = model(images)
+        x_test /= torch.norm(x_test, p=2)
+        x_test = m(x_test)
+    if cv == None:
+        analyzed_classes = []
+        for i in range(int(task / params.TASK_SIZE)+1):
+            analyzed_classes = np.concatenate((analyzed_classes, splits[i]))
+        l = []
+        for k in range(len(analyzed_classes)):
+            class_k = int(analyzed_classes[k])
+            l.extend(exemplars[class_k])
+
+        transformer = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        subset = Subset(train_dataset, l, transformer)
+        data_loader = DataLoader(subset, num_workers=params.NUM_WORKERS, batch_size=params.BATCH_SIZE)
+        df = pd.DataFrame(columns = ['data', 'labels'])
+        for images, labels, idxs in data_loader:
+            with torch.no_grad():
+                images = images.float().to(params.DEVICE)
+                x = model(images)
+                x /= torch.norm(x, p=2)
+                x = m(x)
+                tmp = pd.DataFrame()
+                tmp['data'] = x.to('cpu')
+                tmp['labels'] = labels.to('cpu')
+                df = df.append(tmp)
+        cv = GridSearchCV(classifier, clf_params)
+        cv.fit(list(df['data']),list(df['labels']) )
+        print(cv.best_params_)
+    preds = cv.predict(x_test.to('cpu'))
+    return torch.tensor(preds), cv
+
+def classify_nme(images, exemplars, model, task, train_dataset, mean):
     splits = utils.splitter()
     preds = []
     num_classes = task + params.TASK_SIZE
@@ -53,21 +106,25 @@ def classify(images, exemplars, model, task, train_dataset, mean=None):
         preds.append(pred)
     return torch.tensor(preds), means
 
-
 # Algorithm 2 iCaRL INCREMENTAL TRAIN
-def incremental_train(train_dataset, model, exemplars, task, train_transformer, random_s=False):
+def incremental_train(train_dataset, model, exemplars, task, train_transformer, random_s=False, loss_version='opt1'):
     train_splits = utils.splitter()  # indexes of the splits
     train_indexes = utils.get_task_indexes(train_dataset, task)
     classes = utils.get_classes(train_splits, task)
-    model = update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer)
+    secs1  = int(round(time.time()))
+    model = update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer, loss_version)
+    secs2  = int(round(time.time()))
     m = int(params.K / (task + params.TASK_SIZE) + 0.5)  # number of exemplars
     exemplars = reduce_exemplars(exemplars, m)
+    secs3  = int(round(time.time()))
     exemplars = construct_exemplar_set(exemplars, m, classes[task:], train_dataset, train_indexes, model, random_s)
+    secs4  = int(round(time.time()))
+    print('udpate representation: ', secs2-secs1, 'reduce exemplars:', secs3-secs2, 'costruct exemplars:', secs4-secs3)
     return model, exemplars
 
 
 # Algorithm 3 iCaRL UPDATE REPRESENTATION
-def update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer):
+def update_representation(train_dataset, exemplars, model, task, train_indexes, train_splits, train_transformer, loss_version='opt1'):
     classes = utils.get_classes(train_splits, task)
     # data_idx contains indexes of images in train_data (new classes) and in exemplars (old classes)
     data_idx = utils.get_indexes(train_indexes, exemplars)
@@ -81,7 +138,7 @@ def update_representation(train_dataset, exemplars, model, task, train_indexes, 
     old_model = copy.deepcopy(model)  # we keep the current (old) model
     old_model.train(False)  # = .test()
     model.train(True)
-    model = models.train_network(classes, model, old_model, optimizer, data_loader, scheduler, task, train_splits)
+    model = models.train_network(classes, model, old_model, optimizer, data_loader, scheduler, task, train_splits, loss_version)
     return model
 
 

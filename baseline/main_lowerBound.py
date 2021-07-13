@@ -9,17 +9,19 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import torch.nn as nn
+import ResNet
+import models
+import params
+import utils
+from dataset import *
 
-from owr import ResNet
-from owr import models
-from owr import params
-from owr import utils
-from owr.dataset import *
-import icarl
-import ModelRoutines
-
+###### This script is the main for running finetuning on CIFAR 100 dataset
+# remeber to set lr = 2 in params before running.
 print(f"learning rate : {params.LR}")
 print(f"learning rate schedule epochs: {params.STEP_SIZE}")
+
+############################################################
+#################### DATA MANAGEMENT #######################
 
 cifar = datasets.cifar.CIFAR100
 # Initializations
@@ -37,24 +39,31 @@ train_dataset = cifar('data', train=True, download=True, transform=train_transfo
 test_dataset = cifar('data', train=False, download=True, transform=test_transformer)
 # splits
 splits = utils.splitter()
-# model
+
+###########################################################################
+##################### instantiate BiC object###############################
+
 model = ResNet.resnet32(num_classes=params.NUM_CLASSES).to(params.DEVICE)
 # simplification: we initialize the network with all the classes
-optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MOMENTUM,
-                            weight_decay=params.WEIGHT_DECAY)
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE,
-                                                 gamma=params.GAMMA)  # allow to change the LR at predefined epochs
-# loss
-loss_function = nn.BCEWithLogitsLoss()  # CrossEntropyLoss() #
-binary = 1 # da eliminare
-# Run
-exemplars = [None] * params.NUM_CLASSES # da eliminare
 
+#########################################################################################
+##################### Loss Function (Only classification) ###############################
+loss_function = nn.BCEWithLogitsLoss()  # CrossEntropyLoss() #
+
+############################################################################
+# lists for the evaluation phase
 test_indexes = []
 # vectors for accuracy curves
 train_accs = []
 test_accs = []
+
+#############################################################################
+##################  RUN THE INCREMENTAL TRAINING ############################
+
 for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
+    #########################################################################
+    ######## MANAGE THE DATA FOR THE CURRENT TASK ###########################
+
     train_indexes = utils.get_task_indexes(train_dataset, task)
     test_indexes = test_indexes + utils.get_task_indexes(test_dataset, task)
 
@@ -65,17 +74,25 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
                               batch_size=params.BATCH_SIZE, shuffle=True)
     test_loader = DataLoader(test_subset, num_workers=params.NUM_WORKERS,
                              batch_size=params.BATCH_SIZE, shuffle=True)
+    # instantiate optimizer and scheduler for this task
+    optimizer = torch.optim.SGD(model.parameters(), lr=params.LR, momentum=params.MOMENTUM,
+                                weight_decay=params.WEIGHT_DECAY)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, params.STEP_SIZE,
+                                                     gamma=params.GAMMA)  # allow to change the LR at predefined epochs
+    classes = utils.get_classes(splits, task) # classes until now
 
-    classes = utils.get_classes(splits, task)
-    model = models.train_network(classes, model, optimizer, train_loader, scheduler, task)
-    #### EVALUATION
+    ################################### Incremental Training ##########################################
+    # train the model without preventing catastrofic forgetting
+    model = models.train_network_lower_bound(classes, model, optimizer, train_loader, scheduler, task)
+
+    ########################## EVALUATION OF THE CURRENT INCREMENTAL STEP #############################
+
     print('\n EVALUATION \n')
     classes = []
     for i, x in enumerate(splits[:int(task / params.TASK_SIZE) + 1]):
         v = np.array(x)
         classes = np.concatenate((classes, v), axis=None)
         classes = classes.astype(int)
-    mean = None
     total = 0.0
     running_corrects = 0.0
     for img, lbl, _ in train_loader:
@@ -115,7 +132,9 @@ for task in range(0, params.NUM_CLASSES, params.TASK_SIZE):
     # cf = confusion_matrix(tot_lab, tot_preds)
     # df_cm = pd.DataFrame(cf, range(task + params.TASK_SIZE), range(task + params.TASK_SIZE))
 
-### PLOT
+######################################################################################
+#################### PLOT THE WHOLE ACCURACY CURVES ##################################
+
 print(f"Training accuracies : {train_accs}")
 print(f"Testing accuracies : {test_accs}")
 plt.plot(train_accs, 'go-', label='training accuracies', linewidth=2)
