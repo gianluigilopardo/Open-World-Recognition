@@ -8,7 +8,7 @@ import time
 
 from owr.our_modifications.incremental_learning.ICARL.RDL import utils
 from owr.our_modifications.incremental_learning.ICARL.RDL import params
-from owr.our_modifications.incremental_learning.ICARL.RDL.dataset import *
+# from owr.our_modifications.incremental_learning.ICARL.RDL.dataset import *
 from owr.our_modifications.incremental_learning.ICARL.RDL import models
 
 from sklearn.model_selection import GridSearchCV
