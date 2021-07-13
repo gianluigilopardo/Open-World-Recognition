@@ -4,9 +4,10 @@ import copy
 import numpy as np
 from numpy import random
 
-from owr.ablation_study import models
-from owr.ablation_study import params
-from owr.ablation_study.dataset import *
+
+from owr.ablation_study.bic_method import models
+from owr.ablation_study.bic_method import params
+from owr.ablation_study.bic_method.dataset import *
 
 
 # Algorithm 1 iCaRL CLASSIFY
