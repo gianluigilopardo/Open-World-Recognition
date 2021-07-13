@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from PIL import Image
 
-from owr.ablation_study import utils
-from owr.ablation_study import params
+from owr.ablation_study.bic_method import utils
+from owr.ablation_study.bic_method import params
 
 
 class Subset(torch.utils.data.Dataset):
