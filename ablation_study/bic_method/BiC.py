@@ -9,11 +9,11 @@ import numpy as np
 from numpy import random
 import matplotlib.pyplot as plt
 
-from owr.ablation_study import ResNet
-from owr.ablation_study import params
-from owr.ablation_study import models
-from owr.ablation_study import params
-from owr.ablation_study.dataset import *
+from owr.ablation_study.bic_method import ResNet
+from owr.ablation_study.bic_method import params
+from owr.ablation_study.bic_method import models
+from owr.ablation_study.bic_method import params
+from owr.ablation_study.bic_method.dataset import *
 
 class BiasCorrectionLayer(nn.Module):
     def __init__(self, current_task): #
